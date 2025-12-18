@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strconv"
+	"strings"
 
 	"github.com/jlaffaye/ftp"
 )
@@ -79,10 +79,8 @@ func mkdirRecursive(c *ftp.ServerConn, path string) error {
 }
 
 func isFtpAlreadyExists(err error) bool {
-	ftpErr, ok := err.(*ftp.ResponseError)
-	if !ok {
+	if err == nil {
 		return false
 	}
-	code, _ := strconv.Atoi(string(ftpErr.Code[:3]))
-	return code == 550
+	return strings.Contains(err.Error(), "550")
 }
