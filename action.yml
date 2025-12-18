@@ -1,0 +1,40 @@
+name: 'FTP Upload (Go)'
+description: 'Upload a directory tree to an FTP server'
+author: 'YourName'
+
+inputs:
+  host:
+    description: 'FTP host'
+    required: true
+  port:
+    description: 'FTP port (default 21)'
+    required: false
+    default: '21'
+  user:
+    description: 'FTP username'
+    required: true
+  password:
+    description: 'FTP password'
+    required: true
+  local-dir:
+    description: 'Local directory to upload (relative to $GITHUB_WORKSPACE)'
+    required: true
+  remote-dir:
+    description: 'Remote directory on the FTP server (will be created if missing)'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Build & run Go uploader
+      shell: bash
+      env:
+        INPUT_HOST:     ${{ inputs.host }}
+        INPUT_PORT:     ${{ inputs.port }}
+        INPUT_USER:     ${{ inputs.user }}
+        INPUT_PASSWORD: ${{ inputs.password }}
+        INPUT_LOCALDIR: ${{ inputs.local-dir }}
+        INPUT_REMOTEDIR: ${{ inputs.remote-dir }}
+      run: |
+        cd ${{ github.action_path }}
+        go run main.go
